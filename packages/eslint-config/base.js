@@ -1,32 +1,82 @@
-import js from "@eslint/js";
-import eslintConfigPrettier from "eslint-config-prettier";
-import turboPlugin from "eslint-plugin-turbo";
-import tseslint from "typescript-eslint";
-import onlyWarn from "eslint-plugin-only-warn";
-
-/**
- * A shared ESLint configuration for the repository.
- *
- * @type {import("eslint").Linter.Config[]}
- * */
-export const config = [
-  js.configs.recommended,
-  eslintConfigPrettier,
-  ...tseslint.configs.recommended,
-  {
-    plugins: {
-      turbo: turboPlugin,
+module.exports = {
+  root: true,
+  env: {
+    browser: true,
+    es2020: true,
+  },
+  extends: [
+    'airbnb',
+    'airbnb-typescript',
+    'airbnb/hooks',
+    'plugin:react/recommended',
+    'plugin:jsx-a11y/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:prettier/recommended',
+    'plugin:storybook/recommended',
+    'plugin:@tanstack/eslint-plugin-query/recommended',
+  ],
+  ignorePatterns: ['dist', '.eslintrc.cjs', 'node_modules'],
+  parser: '@typescript-eslint/parser',
+  plugins: [
+    '@tanstack/query',
+    'react-refresh',
+    '@typescript-eslint',
+    'react-hooks',
+    'prettier',
+    'simple-import-sort',
+  ],
+  rules: {
+    'jsx-a11y/click-events-have-key-events': 'off',
+    'jsx-a11y/no-noninteractive-element-interactions': 'off',
+    '@typescript-eslint/no-shadow': 'off',
+    'no-shadow': 'off',
+    'react/no-unstable-nested-components': 'off',
+    'react-refresh/only-export-components': 'off',
+    'react/require-default-props': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    '@typescript-eslint/naming-convention': 'off',
+    'react/display-name': 'off',
+    'consistent-return': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    'import/prefer-default-export': 'off',
+    'import/no-extraneous-dependencies': 'off',
+    'react/react-in-jsx-scope': 'off',
+    'react/function-component-definition': [
+      'error',
+      { namedComponents: 'arrow-function' },
+    ],
+    'import/no-cycle': 'off',
+    'no-underscore-dangle': 'off',
+    'simple-import-sort/imports': 'error',
+    'simple-import-sort/exports': 'error',
+    'import/order': 'off',
+    'simple-import-sort/imports': [
+      'error',
+      {
+        groups: [
+          ['^react', '^next'],
+          ['^@?\\w'],
+          ['^@/'],
+          ['^\\.'],
+          ['\\.css$', '\\.scss$'],
+        ],
+      },
+    ],
+    'simple-import-sort/exports': 'error',
+    'react/prop-types': 'off',
+  },
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+  },
+  settings: {
+    react: {
+      version: 'detect',
     },
-    rules: {
-      "turbo/no-undeclared-env-vars": "warn",
+    'import/resolver': {
+      node: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
     },
   },
-  {
-    plugins: {
-      onlyWarn,
-    },
-  },
-  {
-    ignores: ["dist/**"],
-  },
-];
+};
