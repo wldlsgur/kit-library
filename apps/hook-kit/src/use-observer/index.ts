@@ -40,6 +40,7 @@ const useObserver = <T extends HTMLElement>({
     return () => {
       if ($element) {
         observer.unobserve($element);
+        observer.disconnect();
       }
     };
   }, [callback, root, rootMargin, threshold]);
