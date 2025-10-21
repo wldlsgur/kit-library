@@ -7,7 +7,7 @@ interface Props extends IntersectionObserverInit {
 }
 
 const useObserver = <T extends HTMLElement>({
-  root = null,
+  root,
   rootMargin,
   threshold,
   onIntersect,
