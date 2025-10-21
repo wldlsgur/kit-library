@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 
-const useCallback = <T extends (...args: any[]) => any>(callback: T): T => {
+const useEventCallback = <T extends (...args: any[]) => any>(callback?: T) => {
   const callbackRef = useRef(callback);
 
   useEffect(() => {
@@ -12,4 +12,4 @@ const useCallback = <T extends (...args: any[]) => any>(callback: T): T => {
   return callbackRef.current;
 };
 
-export default useCallback;
+export default useEventCallback;

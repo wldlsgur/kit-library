@@ -2,10 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-interface Props {
+interface Props extends IntersectionObserverInit {
   isLazy?: boolean;
-  threshold?: number;
-  rootMargin?: string;
 }
 
 const LOAD_IMG_EVENT_TYPE = 'loadImage';
@@ -23,7 +21,7 @@ const onIntersection = (
   });
 };
 
-const useLazyImageLoad = ({ isLazy, threshold, rootMargin }: Props) => {
+const useLazyImageLoad = ({ isLazy, root, threshold, rootMargin }: Props) => {
   const [loaded, setLoaded] = useState(!isLazy);
   const ref = useRef<HTMLImageElement>(null);
 
@@ -50,19 +48,18 @@ const useLazyImageLoad = ({ isLazy, threshold, rootMargin }: Props) => {
   }, [isLazy]);
 
   useEffect(() => {
-    if (!isLazy) {
+    if (!isLazy || !ref.current) {
       return;
     }
 
     observer = new IntersectionObserver(onIntersection, {
+      root,
       threshold,
       rootMargin,
     });
 
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-  }, [isLazy, threshold, rootMargin]);
+    observer.observe(ref.current);
+  }, [isLazy, threshold, rootMargin, root]);
 
   return { ref, loaded };
 };
