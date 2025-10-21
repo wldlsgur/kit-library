@@ -8,8 +8,8 @@ interface Props extends IntersectionObserverInit {
 
 const useObserver = <T extends HTMLElement>({
   root = null,
-  rootMargin = '0px',
-  threshold = 0.1,
+  rootMargin,
+  threshold,
   onIntersect,
 }: Props) => {
   const [isIntersecting, setIsIntersecting] = useState(false);
