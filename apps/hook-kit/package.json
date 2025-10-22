@@ -22,13 +22,18 @@
     }
   },
   "private": false,
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepublishOnly": "pnpm build",
+    "publish": "npm publish"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "peerDependencies": {
     "react": "^18 || ^19",
