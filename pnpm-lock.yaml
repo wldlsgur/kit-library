@@ -15,7 +15,7 @@ importers:
         specifier: ^2.5.8
         version: 2.5.8
 
-  apps/hook-box:
+  apps/hook-kits:
     dependencies:
       react:
         specifier: ^19.1.1
