@@ -1,9 +1,11 @@
 export { default as useClickAway } from './use-click-away';
+export { default as useCopyClipBoard } from './use-copy-clipboard';
 export { default as useCount } from './use-count';
 export { default as useEventCallback } from './use-event-callback';
 export { default as useEventSource } from './use-event-source';
 export { default as useHover } from './use-hover';
 export { default as useInput } from './use-input';
+export { default as useClient } from './use-is-client';
 export { default as useLazyImageLoad } from './use-lazy-load-image';
 export { default as useLocalStorage } from './use-local-storage';
 export { default as useMount } from './use-mount';
