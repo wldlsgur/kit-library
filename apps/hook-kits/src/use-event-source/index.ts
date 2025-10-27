@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import useEventCallback from '@/use-event-callback';
 
 interface Props<T> {
+  enabled?: boolean;
   initialState?: T[];
   url: string;
   event?: string;
@@ -15,6 +16,7 @@ interface Props<T> {
 }
 
 const useEventSource = <T>({
+  enabled = true,
   initialState,
   url,
   event = 'message',
@@ -41,6 +43,10 @@ const useEventSource = <T>({
   }, [cancelEventName]);
 
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
     const eventSource = new EventSource(url, { withCredentials: true });
 
     eventSourceRef.current = eventSource;
@@ -97,6 +103,7 @@ const useEventSource = <T>({
       }
     };
   }, [
+    enabled,
     event,
     onCancelCallback,
     onErrorCallback,

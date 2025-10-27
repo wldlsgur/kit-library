@@ -1,15 +1,27 @@
 {
   "name": "hook-kits",
-  "description": "react hooks",
+  "description": "A lightweight, reusable React hooks library for modern apps using Next.js and React 18+.",
   "keywords": [
     "react",
+    "react hooks",
+    "hooks",
+    "custom hooks",
+    "use hook",
     "nextjs",
-    "hook"
+    "frontend",
+    "react utilities",
+    "react toolkit",
+    "typescript",
+    "state management",
+    "performance hooks"
   ],
   "files": [
     "dist"
   ],
-  "author": "dhgg321",
+  "author": {
+    "name": "dhgg321",
+    "url": "https://github.com/wldlsgur"
+  },
   "license": "MIT",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -42,11 +54,10 @@
     "react": "^18 || ^19",
     "react-dom": "^18 || ^19"
   },
-  "dependencies": {
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@tanstack/eslint-plugin-query": "4.39.1",
