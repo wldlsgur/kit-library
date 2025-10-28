@@ -1,8 +1,12 @@
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
-import { defineConfig } from 'vite';
+import { defineConfig, InlineConfig, UserConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
+
+interface VitestConfigExport extends UserConfig {
+  test: InlineConfig;
+}
 
 export default defineConfig({
   root: __dirname,
@@ -26,6 +30,11 @@ export default defineConfig({
       ],
     }),
   ],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: resolve(__dirname, './vitest.setup.ts'),
+  },
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
@@ -44,4 +53,4 @@ export default defineConfig({
     },
     emptyOutDir: true,
   },
-});
+} as VitestConfigExport);

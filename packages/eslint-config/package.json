@@ -22,8 +22,7 @@
     "eslint-plugin-react-hooks": "4.3.0",
     "eslint-plugin-react-refresh": "0.4.9",
     "eslint-plugin-simple-import-sort": "12.1.1",
-    "eslint-plugin-storybook": "0.11.1",
-    "@tanstack/eslint-plugin-query": "4.39.1"
+    "eslint-plugin-storybook": "0.11.1"
   },
   "publishConfig": {
     "access": "public"
