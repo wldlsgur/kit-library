@@ -26,7 +26,6 @@ const useEventSource = <T>({
   onCancel,
 }: Props<T>) => {
   const [state, setState] = useState(initialState || []);
-  const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
   const onOpenCallback = useEventCallback(onOpen);
@@ -51,7 +50,6 @@ const useEventSource = <T>({
 
     eventSourceRef.current = eventSource;
 
-    setIsLoading(true);
     setIsError(false);
 
     const handleOpen = () => {
@@ -59,7 +57,6 @@ const useEventSource = <T>({
     };
 
     const handleError = (event: Event) => {
-      setIsLoading(false);
       setIsError(true);
       onErrorCallback?.(
         event instanceof ErrorEvent ? (event.error ?? event) : event,
@@ -79,8 +76,6 @@ const useEventSource = <T>({
     };
 
     const handleCancelEventSource = () => {
-      setIsLoading(false);
-
       if (eventSource.readyState !== EventSource.CLOSED) {
         onCancelCallback?.();
         eventSource.close();
@@ -115,7 +110,6 @@ const useEventSource = <T>({
 
   return {
     state,
-    isLoading,
     isError,
     cancelEventSource,
     eventSource: eventSourceRef.current,
