@@ -1,15 +1,19 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 
-const useEventCallback = <T extends (...args: any[]) => any>(callback?: T) => {
-  const callbackRef = useRef(callback);
+const useEventCallback = <T extends (...args: any[]) => any>(
+  callback?: T,
+): T => {
+  const ref = useRef(callback);
 
-  useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
+  ref.current = callback;
 
-  return callbackRef.current;
+  const stableCallback = useCallback((...args: Parameters<T>) => {
+    return ref.current?.(...args);
+  }, []);
+
+  return stableCallback as T;
 };
 
 export default useEventCallback;

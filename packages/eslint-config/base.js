@@ -15,12 +15,10 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
     'plugin:storybook/recommended',
-    'plugin:@tanstack/eslint-plugin-query/recommended',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs', 'node_modules'],
   parser: '@typescript-eslint/parser',
   plugins: [
-    '@tanstack/query',
     'react-refresh',
     '@typescript-eslint',
     'react-hooks',
