@@ -34,17 +34,16 @@
     }
   },
   "private": false,
-  "version": "1.1.1",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "publish": "npm publish",
-    "release:patch": "npm version patch && pnpm build && npm publish",
-    "release:minor": "npm version minor && pnpm build && npm publish",
-    "release:major": "npm version major && pnpm build && npm publish",
+    "release:patch": "npm version patch && pnpm build && pnpm publish",
+    "release:minor": "npm version minor && pnpm build && pnpm publish",
+    "release:major": "npm version major && pnpm build && pnpm publish",
     "test:unit": "vitest",
     "test:unit:cov": "vitest run --coverage"
   },
