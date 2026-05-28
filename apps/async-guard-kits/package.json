@@ -1,0 +1,63 @@
+{
+  "name": "async-guard-kits",
+  "description": "A Babel plugin that automatically wraps async functions with try-catch error handling.",
+  "keywords": [
+    "babel",
+    "babel-plugin",
+    "async",
+    "try-catch",
+    "error-handling",
+    "typescript",
+    "async-await"
+  ],
+  "files": [
+    "dist"
+  ],
+  "author": {
+    "name": "dhgg321",
+    "url": "https://github.com/wldlsgur"
+  },
+  "license": "MIT",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "private": false,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "lint": "eslint .",
+    "preversion": "pnpm build",
+    "version": "git add .",
+    "postversion": "git push && git push --tags && pnpm publish --no-git-checks",
+    "release:patch": "npm version patch",
+    "release:minor": "npm version minor",
+    "release:major": "npm version major",
+    "test:unit": "vitest",
+    "test:unit:cov": "vitest run --coverage"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@babel/core": "^7.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/types": "^7.26.0",
+    "@repo/typescript-config": "workspace:*",
+    "@types/babel__core": "^7.20.5",
+    "typescript": "5.7.2",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "rollup": "^4.40.0",
+    "tslib": "^2.8.0",
+    "vitest": "^4.0.4"
+  }
+}
