@@ -1,14 +1,15 @@
 {
-  "name": "async-guard-kits",
-  "description": "A Babel plugin that automatically wraps async functions with try-catch error handling.",
+  "name": "babel-plugin-dev-strip",
+  "description": "A Babel plugin that strips code blocks marked with @dev-only comment directive from production builds.",
   "keywords": [
     "babel",
     "babel-plugin",
-    "async",
-    "try-catch",
-    "error-handling",
-    "typescript",
-    "async-await"
+    "dev-only",
+    "strip",
+    "dead-code",
+    "production",
+    "build",
+    "optimization"
   ],
   "files": [
     "dist"
