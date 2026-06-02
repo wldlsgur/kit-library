@@ -14,6 +14,7 @@ export { default as useObserver } from './use-observer';
 export { default as usePrevious } from './use-previous';
 export { default as useRafState } from './use-raf-state';
 export { default as useResize } from './use-resize';
+export { default as useScrollToTop } from './use-scroll-to-top';
 export { default as useSessionStorage } from './use-session-storage';
 export { default as useToggle } from './use-toggle';
 export { default as useWheel } from './use-wheel';

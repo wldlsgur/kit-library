@@ -36,6 +36,7 @@ pnpm add hook-kits
 | [`useResize`](#useresize)                 | Observe element resize (ResizeObserver)      |
 | [`useObserver`](#useobserver)             | Detect viewport entry (IntersectionObserver) |
 | [`useLazyImageLoad`](#uselazyimageload)   | Lazy load images                             |
+| [`useScrollToTop`](#usescrolltotop)       | Scroll to top on dependency change           |
 
 ### Browser & Storage
 
@@ -373,6 +374,46 @@ function ModalExample() {
       )}
     </div>
   );
+}
+```
+
+---
+
+### useScrollToTop
+
+Scrolls to the top of the page whenever the given dependency changes. Router-agnostic &mdash; works with Next.js, React Router, or any value.
+
+```ts
+useScrollToTop(dependency: unknown);
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| `dependency` | `unknown` | Scroll resets when this value changes |
+
+```tsx
+// Next.js App Router
+import { usePathname } from 'next/navigation';
+import { useScrollToTop } from 'hook-kits';
+
+function ScrollReset() {
+  const pathname = usePathname();
+  useScrollToTop(pathname);
+
+  return null;
+}
+```
+
+```tsx
+// React Router
+import { useLocation } from 'react-router-dom';
+import { useScrollToTop } from 'hook-kits';
+
+function ScrollReset() {
+  const { pathname } = useLocation();
+  useScrollToTop(pathname);
+
+  return null;
 }
 ```
 
