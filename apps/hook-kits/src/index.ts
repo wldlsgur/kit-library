@@ -8,6 +8,7 @@ export { default as useInput } from './use-input';
 export { default as useIsClient } from './use-is-client';
 export { default as useLazyImageLoad } from './use-lazy-load-image';
 export { default as useLocalStorage } from './use-local-storage';
+export { default as useLockBodyScroll } from './use-lock-body-scroll';
 export { default as useMount } from './use-mount';
 export { default as useObserver } from './use-observer';
 export { default as usePrevious } from './use-previous';

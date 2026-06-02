@@ -16,40 +16,41 @@ pnpm add hook-kits
 
 ### State
 
-| Hook | Description |
-| --- | --- |
-| [`useToggle`](#usetoggle) | Toggle boolean state |
-| [`useCount`](#usecount) | Counter with min/max limits |
-| [`useInput`](#useinput) | Input / form state management |
-| [`usePrevious`](#useprevious) | Track previous render value |
+| Hook                          | Description                            |
+| ----------------------------- | -------------------------------------- |
+| [`useToggle`](#usetoggle)     | Toggle boolean state                   |
+| [`useCount`](#usecount)       | Counter with min/max limits            |
+| [`useInput`](#useinput)       | Input / form state management          |
+| [`usePrevious`](#useprevious) | Track previous render value            |
 | [`useRafState`](#userafstate) | State update via requestAnimationFrame |
 
 ### DOM & Interaction
 
-| Hook | Description |
-| --- | --- |
-| [`useClickAway`](#useclickaway) | Detect clicks outside an element |
-| [`useHover`](#usehover) | Detect hover state |
-| [`useHotKeys`](#usehotkeys) | Detect keyboard shortcuts |
-| [`useWheel`](#usewheel) | Detect mouse wheel events |
-| [`useResize`](#useresize) | Observe element resize (ResizeObserver) |
-| [`useObserver`](#useobserver) | Detect viewport entry (IntersectionObserver) |
-| [`useLazyImageLoad`](#uselazyimageload) | Lazy load images |
+| Hook                                      | Description                                  |
+| ----------------------------------------- | -------------------------------------------- |
+| [`useClickAway`](#useclickaway)           | Detect clicks outside an element             |
+| [`useHover`](#usehover)                   | Detect hover state                           |
+| [`useHotKeys`](#usehotkeys)               | Detect keyboard shortcuts                    |
+| [`useLockBodyScroll`](#uselockbodyscroll) | Lock body scroll                             |
+| [`useWheel`](#usewheel)                   | Detect mouse wheel events                    |
+| [`useResize`](#useresize)                 | Observe element resize (ResizeObserver)      |
+| [`useObserver`](#useobserver)             | Detect viewport entry (IntersectionObserver) |
+| [`useLazyImageLoad`](#uselazyimageload)   | Lazy load images                             |
 
 ### Browser & Storage
 
-| Hook | Description |
-| --- | --- |
-| [`useLocalStorage`](#uselocalstorage) | Read/write localStorage (SSR-safe) |
+| Hook                                      | Description                          |
+| ----------------------------------------- | ------------------------------------ |
+| [`useLocalStorage`](#uselocalstorage)     | Read/write localStorage (SSR-safe)   |
 | [`useSessionStorage`](#usesessionstorage) | Read/write sessionStorage (SSR-safe) |
-| [`useCopyClipBoard`](#usecopyclipboard) | Copy text to clipboard |
-| [`useIsClient`](#useisclient) | Check if running on client side |
-| [`useMount`](#usemount) | Check if component is mounted |
+| [`useCopyClipBoard`](#usecopyclipboard)   | Copy text to clipboard               |
+| [`useIsClient`](#useisclient)             | Check if running on client side      |
+| [`useMount`](#usemount)                   | Check if component is mounted        |
 
 ### Utility
 
-| Hook | Description |
-| --- | --- |
+| Hook                                    | Description                                         |
+| --------------------------------------- | --------------------------------------------------- |
 | [`useEventCallback`](#useeventcallback) | Stable callback reference (prevents stale closures) |
 
 ---
@@ -64,13 +65,13 @@ Manages boolean state.
 const { isToggle, handleToggle, handleSetTrue, handleSetFalse, handleSetBoolean } = useToggle(initialState?: boolean);
 ```
 
-| Return | Type | Description |
-| --- | --- | --- |
-| `isToggle` | `boolean` | Current state |
-| `handleToggle` | `() => void` | Toggle state |
-| `handleSetTrue` | `() => void` | Set to `true` |
-| `handleSetFalse` | `() => void` | Set to `false` |
-| `handleSetBoolean` | `(state: boolean) => void` | Set directly |
+| Return             | Type                       | Description    |
+| ------------------ | -------------------------- | -------------- |
+| `isToggle`         | `boolean`                  | Current state  |
+| `handleToggle`     | `() => void`               | Toggle state   |
+| `handleSetTrue`    | `() => void`               | Set to `true`  |
+| `handleSetFalse`   | `() => void`               | Set to `false` |
+| `handleSetBoolean` | `(state: boolean) => void` | Set directly   |
 
 ```tsx
 import { useToggle } from 'hook-kits';
@@ -96,18 +97,21 @@ const { count, increase, decrease, handleChangeCount } = useCount({
 });
 ```
 
-| Return | Type | Description |
-| --- | --- | --- |
-| `count` | `number` | Current count |
-| `increase` | `() => void` | +1 |
-| `decrease` | `() => void` | -1 (min 1) |
-| `handleChangeCount` | `(n: number) => void` | Set directly |
+| Return              | Type                  | Description   |
+| ------------------- | --------------------- | ------------- |
+| `count`             | `number`              | Current count |
+| `increase`          | `() => void`          | +1            |
+| `decrease`          | `() => void`          | -1 (min 1)    |
+| `handleChangeCount` | `(n: number) => void` | Set directly  |
 
 ```tsx
 import { useCount } from 'hook-kits';
 
 function CountExample() {
-  const { count, increase, decrease } = useCount({ initialState: 1, limit: 10 });
+  const { count, increase, decrease } = useCount({
+    initialState: 1,
+    limit: 10,
+  });
 
   return (
     <div>
@@ -129,24 +133,40 @@ Manages single value or object-based form input.
 const { value, handleInputChange, handleFieldChange, resetValue } = useInput(initialValue: T);
 ```
 
-| Return | Type | Description |
-| --- | --- | --- |
-| `value` | `T` | Current value |
-| `handleInputChange` | `(e: ChangeEvent) => void` | Update single value |
+| Return              | Type                       | Description                             |
+| ------------------- | -------------------------- | --------------------------------------- |
+| `value`             | `T`                        | Current value                           |
+| `handleInputChange` | `(e: ChangeEvent) => void` | Update single value                     |
 | `handleFieldChange` | `(e: ChangeEvent) => void` | Update object field by `name` attribute |
-| `resetValue` | `() => void` | Reset to initial value |
+| `resetValue`        | `() => void`               | Reset to initial value                  |
 
 ```tsx
 import { useInput } from 'hook-kits';
 
 function FormExample() {
-  const { value, handleFieldChange, resetValue } = useInput({ email: '', name: '' });
+  const { value, handleFieldChange, resetValue } = useInput({
+    email: '',
+    name: '',
+  });
 
   return (
     <form>
-      <input name="email" value={value.email} onChange={handleFieldChange} />
-      <input name="name" value={value.name} onChange={handleFieldChange} />
-      <button type="button" onClick={resetValue}>Reset</button>
+      <input
+        name='email'
+        value={value.email}
+        onChange={handleFieldChange}
+      />
+      <input
+        name='name'
+        value={value.name}
+        onChange={handleFieldChange}
+      />
+      <button
+        type='button'
+        onClick={resetValue}
+      >
+        Reset
+      </button>
     </form>
   );
 }
@@ -172,7 +192,9 @@ function PreviousExample() {
 
   return (
     <div>
-      <p>Current: {count} / Previous: {prev ?? 'N/A'}</p>
+      <p>
+        Current: {count} / Previous: {prev ?? 'N/A'}
+      </p>
       <button onClick={() => setCount((c) => c + 1)}>+1</button>
     </div>
   );
@@ -189,9 +211,9 @@ Updates state within `requestAnimationFrame`. Ideal for high-frequency updates l
 const { state, setRafState } = useRafState(defaultValue: T);
 ```
 
-| Return | Type | Description |
-| --- | --- | --- |
-| `state` | `T` | Current state |
+| Return        | Type                 | Description            |
+| ------------- | -------------------- | ---------------------- |
+| `state`       | `T`                  | Current state          |
 | `setRafState` | `(value: T) => void` | RAF-based state update |
 
 ```tsx
@@ -226,7 +248,11 @@ function DropdownExample() {
     <div>
       <button onClick={() => setOpen(true)}>Open</button>
       {open && (
-        <div ref={(el) => { if (el) ref.current = el; }}>
+        <div
+          ref={(el) => {
+            if (el) ref.current = el;
+          }}
+        >
           Click outside to close
         </div>
       )}
@@ -245,10 +271,10 @@ Detects hover state of an element.
 const { ref, isHover } = useHover<T extends HTMLElement>();
 ```
 
-| Return | Type | Description |
-| --- | --- | --- |
-| `ref` | `React.Ref<T>` | Ref to attach to the target element |
-| `isHover` | `boolean` | Whether the element is being hovered |
+| Return    | Type           | Description                          |
+| --------- | -------------- | ------------------------------------ |
+| `ref`     | `React.Ref<T>` | Ref to attach to the target element  |
+| `isHover` | `boolean`      | Whether the element is being hovered |
 
 ```tsx
 import { useHover } from 'hook-kits';
@@ -257,7 +283,10 @@ function HoverExample() {
   const { ref, isHover } = useHover<HTMLDivElement>();
 
   return (
-    <div ref={ref} style={{ background: isHover ? '#4caf50' : '#ccc' }}>
+    <div
+      ref={ref}
+      style={{ background: isHover ? '#4caf50' : '#ccc' }}
+    >
       {isHover ? 'Hovering!' : 'Hover me'}
     </div>
   );
@@ -277,10 +306,10 @@ useHotKeys({
 });
 ```
 
-| Param | Type | Description |
-| --- | --- | --- |
-| `keys` | `ModifierKey[] \| [NormalKey] \| [...ModifierKey[], NormalKey]` | Key combination (case-insensitive) |
-| `callback` | `() => void` | Callback to invoke when matched |
+| Param      | Type                                                            | Description                        |
+| ---------- | --------------------------------------------------------------- | ---------------------------------- |
+| `keys`     | `ModifierKey[] \| [NormalKey] \| [...ModifierKey[], NormalKey]` | Key combination (case-insensitive) |
+| `callback` | `() => void`                                                    | Callback to invoke when matched    |
 
 - **Modifier + normal key** &mdash; `['Ctrl', 'S']`, `['Ctrl', 'Shift', 'K']`
 - **Normal key only** &mdash; `['Escape']`, `['Enter']`
@@ -312,6 +341,43 @@ function CloseModal() {
 
 ---
 
+### useLockBodyScroll
+
+Locks body scroll by setting `overflow: hidden`. Useful for modals and drawers. Restores the original overflow value on unmount or when `locked` becomes `false`.
+
+```ts
+useLockBodyScroll(locked?: boolean); // default: true
+```
+
+| Param    | Type      | Description                             |
+| -------- | --------- | --------------------------------------- |
+| `locked` | `boolean` | Whether to lock scroll (default `true`) |
+
+```tsx
+import { useLockBodyScroll } from 'hook-kits';
+import { useState } from 'react';
+
+function ModalExample() {
+  const [open, setOpen] = useState(false);
+
+  useLockBodyScroll(open);
+
+  return (
+    <div>
+      <button onClick={() => setOpen(true)}>Open Modal</button>
+      {open && (
+        <div>
+          <p>Modal Content</p>
+          <button onClick={() => setOpen(false)}>Close</button>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+---
+
 ### useWheel
 
 Detects browser `wheel` events.
@@ -320,11 +386,11 @@ Detects browser `wheel` events.
 const { isWheel, handleWheelTrue, handleWheelFalse } = useWheel();
 ```
 
-| Return | Type | Description |
-| --- | --- | --- |
-| `isWheel` | `boolean` | Whether wheel is scrolling |
-| `handleWheelTrue` | `() => void` | Manually set to `true` |
-| `handleWheelFalse` | `() => void` | Manually set to `false` |
+| Return             | Type         | Description                |
+| ------------------ | ------------ | -------------------------- |
+| `isWheel`          | `boolean`    | Whether wheel is scrolling |
+| `handleWheelTrue`  | `() => void` | Manually set to `true`     |
+| `handleWheelFalse` | `() => void` | Manually set to `false`    |
 
 ```tsx
 import { useWheel } from 'hook-kits';
@@ -346,10 +412,10 @@ Observes element size changes using `ResizeObserver`.
 const { ref, rect } = useResize<T extends HTMLElement>();
 ```
 
-| Return | Type | Description |
-| --- | --- | --- |
-| `ref` | `React.Ref<T>` | Ref to attach to the target element |
-| `rect` | `DOMRectReadOnly \| null` | Current size and position |
+| Return | Type                      | Description                         |
+| ------ | ------------------------- | ----------------------------------- |
+| `ref`  | `React.Ref<T>`            | Ref to attach to the target element |
+| `rect` | `DOMRectReadOnly \| null` | Current size and position           |
 
 ```tsx
 import { useResize } from 'hook-kits';
@@ -358,7 +424,10 @@ function ResizeExample() {
   const { ref, rect } = useResize<HTMLDivElement>();
 
   return (
-    <div ref={ref} style={{ width: '50%', resize: 'both', overflow: 'auto' }}>
+    <div
+      ref={ref}
+      style={{ width: '50%', resize: 'both', overflow: 'auto' }}
+    >
       {rect?.width.toFixed(0)} x {rect?.height.toFixed(0)}
     </div>
   );
@@ -380,10 +449,10 @@ const { ref, isIntersecting } = useObserver<T extends HTMLElement>({
 });
 ```
 
-| Return | Type | Description |
-| --- | --- | --- |
-| `ref` | `React.Ref<T>` | Ref to attach to the observed element |
-| `isIntersecting` | `boolean` | Whether the element is in the viewport |
+| Return           | Type           | Description                            |
+| ---------------- | -------------- | -------------------------------------- |
+| `ref`            | `React.Ref<T>` | Ref to attach to the observed element  |
+| `isIntersecting` | `boolean`      | Whether the element is in the viewport |
 
 ```tsx
 import { useObserver } from 'hook-kits';
@@ -395,7 +464,10 @@ function ObserverExample() {
   });
 
   return (
-    <div ref={ref} style={{ background: isIntersecting ? '#4caf50' : '#ddd' }}>
+    <div
+      ref={ref}
+      style={{ background: isIntersecting ? '#4caf50' : '#ddd' }}
+    >
       {isIntersecting ? 'Visible' : 'Scroll to see'}
     </div>
   );
@@ -417,10 +489,10 @@ const { ref, loaded } = useLazyImageLoad({
 });
 ```
 
-| Return | Type | Description |
-| --- | --- | --- |
-| `ref` | `React.Ref<HTMLImageElement>` | Ref to attach to the image element |
-| `loaded` | `boolean` | Whether the image has loaded |
+| Return   | Type                          | Description                        |
+| -------- | ----------------------------- | ---------------------------------- |
+| `ref`    | `React.Ref<HTMLImageElement>` | Ref to attach to the image element |
+| `loaded` | `boolean`                     | Whether the image has loaded       |
 
 ```tsx
 import { useLazyImageLoad } from 'hook-kits';
@@ -431,9 +503,9 @@ function LazyImageExample() {
   return (
     <img
       ref={ref}
-      data-src="https://picsum.photos/500"
+      data-src='https://picsum.photos/500'
       src={loaded ? 'https://picsum.photos/500' : undefined}
-      alt="Lazy loaded"
+      alt='Lazy loaded'
     />
   );
 }
@@ -449,11 +521,11 @@ Type-safe read/write for `localStorage`. SSR-safe.
 const { value, setItem, removeItem } = useLocalStorage<T>(key: string, defaultValue: T);
 ```
 
-| Return | Type | Description |
-| --- | --- | --- |
-| `value` | `T` | Current stored value |
-| `setItem` | `(newValue: T) => void` | Store a value |
-| `removeItem` | `() => void` | Remove value (restores default) |
+| Return       | Type                    | Description                     |
+| ------------ | ----------------------- | ------------------------------- |
+| `value`      | `T`                     | Current stored value            |
+| `setItem`    | `(newValue: T) => void` | Store a value                   |
+| `removeItem` | `() => void`            | Remove value (restores default) |
 
 ```tsx
 import { useLocalStorage } from 'hook-kits';
@@ -461,7 +533,11 @@ import { useLocalStorage } from 'hook-kits';
 function ThemeExample() {
   const { value, setItem } = useLocalStorage('theme', 'light');
 
-  return <button onClick={() => setItem(value === 'light' ? 'dark' : 'light')}>Theme: {value}</button>;
+  return (
+    <button onClick={() => setItem(value === 'light' ? 'dark' : 'light')}>
+      Theme: {value}
+    </button>
+  );
 }
 ```
 
@@ -475,17 +551,19 @@ Type-safe read/write for `sessionStorage`. SSR-safe.
 const { value, setItem, removeItem } = useSessionStorage<T>(key: string, defaultValue: T);
 ```
 
-| Return | Type | Description |
-| --- | --- | --- |
-| `value` | `T` | Current stored value |
-| `setItem` | `(newValue: T) => void` | Store a value |
-| `removeItem` | `() => void` | Remove value (restores default) |
+| Return       | Type                    | Description                     |
+| ------------ | ----------------------- | ------------------------------- |
+| `value`      | `T`                     | Current stored value            |
+| `setItem`    | `(newValue: T) => void` | Store a value                   |
+| `removeItem` | `() => void`            | Remove value (restores default) |
 
 ```tsx
 import { useSessionStorage } from 'hook-kits';
 
 function SessionExample() {
-  const { value, setItem, removeItem } = useSessionStorage('user', { name: 'Guest' });
+  const { value, setItem, removeItem } = useSessionStorage('user', {
+    name: 'Guest',
+  });
 
   return (
     <div>
@@ -507,10 +585,10 @@ Copies text to the clipboard using the Clipboard API.
 const { copiedText, copy } = useCopyClipBoard();
 ```
 
-| Return | Type | Description |
-| --- | --- | --- |
-| `copiedText` | `string \| null` | Last copied text |
-| `copy` | `(text: string) => Promise<void>` | Copy to clipboard |
+| Return       | Type                              | Description       |
+| ------------ | --------------------------------- | ----------------- |
+| `copiedText` | `string \| null`                  | Last copied text  |
+| `copy`       | `(text: string) => Promise<void>` | Copy to clipboard |
 
 ```tsx
 import { useCopyClipBoard } from 'hook-kits';

@@ -31,18 +31,23 @@ const useHotKeys = ({ keys, callback }: Props) => {
       if (modifiers.ctrl !== event.ctrlKey) {
         return;
       }
+
       if (modifiers.shift !== event.shiftKey) {
         return;
       }
+
       if (modifiers.alt !== event.altKey) {
         return;
       }
+
       if (modifiers.meta !== event.metaKey) {
         return;
       }
+
       if (normalKey && event.key.toLowerCase() !== normalKey) {
         return;
       }
+
       if (!normalKey && !Object.values(modifiers).some(Boolean)) {
         return;
       }
