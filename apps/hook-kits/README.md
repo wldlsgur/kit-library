@@ -1,599 +1,232 @@
-# 🪝 Hook Kits
+# Hook Kits
 
-Hook Kits is a lightweight, modern React hooks library that helps you build UI and manage logic faster and cleaner.  
-Each hook solves a common problem in everyday React development — from toggles and hover detection to storage and resize tracking.
+A lightweight collection of useful custom hooks for modern React development. Built for React 18+ and Next.js App Router.
 
-> 🚀 Build smarter UIs. Reuse smarter logic.
+## Installation
 
----
-
-## 📦 Installation
-
-Install Hook Kits with your preferred package manager:
-
-```
+```bash
 npm install hook-kits
+# or
 yarn add hook-kits
+# or
 pnpm add hook-kits
 ```
 
-## 📦 Usage
+## Hooks
 
-<details>
-  <summary><strong>useWheel</strong></summary>
+### State
 
-Detects the browser's `wheel` event and returns whether the user is currently scrolling with the mouse wheel.
+| Hook | Description |
+| --- | --- |
+| [`useToggle`](#usetoggle) | Toggle boolean state |
+| [`useCount`](#usecount) | Counter with min/max limits |
+| [`useInput`](#useinput) | Input / form state management |
+| [`usePrevious`](#useprevious) | Track previous render value |
+| [`useRafState`](#userafstate) | State update via requestAnimationFrame |
 
-```tsx
-import { useWheel } from 'hook-kits';
+### DOM & Interaction
 
-export default function WheelControlExample() {
-  const { isWheel, handleWheelTrue, handleWheelFalse } = useWheel();
+| Hook | Description |
+| --- | --- |
+| [`useClickAway`](#useclickaway) | Detect clicks outside an element |
+| [`useHover`](#usehover) | Detect hover state |
+| [`useHotKeys`](#usehotkeys) | Detect keyboard shortcuts |
+| [`useWheel`](#usewheel) | Detect mouse wheel events |
+| [`useResize`](#useresize) | Observe element resize (ResizeObserver) |
+| [`useObserver`](#useobserver) | Detect viewport entry (IntersectionObserver) |
+| [`useLazyImageLoad`](#uselazyimageload) | Lazy load images |
 
-  return (
-    <div>
-      <p>Wheel Detected: {isWheel ? 'YES' : 'NO'}</p>
-      <button onClick={handleWheelTrue}>Set True</button>
-      <button onClick={handleWheelFalse}>Set False</button>
-    </div>
-  );
-}
+### Browser & Storage
+
+| Hook | Description |
+| --- | --- |
+| [`useLocalStorage`](#uselocalstorage) | Read/write localStorage (SSR-safe) |
+| [`useSessionStorage`](#usesessionstorage) | Read/write sessionStorage (SSR-safe) |
+| [`useCopyClipBoard`](#usecopyclipboard) | Copy text to clipboard |
+| [`useIsClient`](#useisclient) | Check if running on client side |
+| [`useMount`](#usemount) | Check if component is mounted |
+
+### Utility
+
+| Hook | Description |
+| --- | --- |
+| [`useEventCallback`](#useeventcallback) | Stable callback reference (prevents stale closures) |
+
+---
+
+## API
+
+### useToggle
+
+Manages boolean state.
+
+```ts
+const { isToggle, handleToggle, handleSetTrue, handleSetFalse, handleSetBoolean } = useToggle(initialState?: boolean);
 ```
 
-</details>
-
-<details>
-  <summary><strong>useToggle</strong></summary>
-
-Simple boolean toggle hook.  
-Provides methods to flip, set, and control a boolean state easily.
+| Return | Type | Description |
+| --- | --- | --- |
+| `isToggle` | `boolean` | Current state |
+| `handleToggle` | `() => void` | Toggle state |
+| `handleSetTrue` | `() => void` | Set to `true` |
+| `handleSetFalse` | `() => void` | Set to `false` |
+| `handleSetBoolean` | `(state: boolean) => void` | Set directly |
 
 ```tsx
 import { useToggle } from 'hook-kits';
 
-export default function ToggleExample() {
-  const {
-    isToggle,
-    handleToggle,
-    handleSetTrue,
-    handleSetFalse,
-    handleSetBoolean,
-  } = useToggle();
+function ToggleExample() {
+  const { isToggle, handleToggle } = useToggle(false);
 
-  return (
-    <div>
-      <p>Toggle State: {isToggle ? 'TRUE' : 'FALSE'}</p>
-
-      <button onClick={handleToggle}>Toggle</button>
-      <button onClick={handleSetTrue}>Set True</button>
-      <button onClick={handleSetFalse}>Set False</button>
-      <button onClick={() => handleSetBoolean(false)}>Set Boolean</button>
-    </div>
-  );
+  return <button onClick={handleToggle}>{isToggle ? 'ON' : 'OFF'}</button>;
 }
 ```
 
-</details>
+---
 
-<details>
-  <summary><strong>useSessionStorage</strong></summary>
+### useCount
 
-A typed sessionStorage hook that reads, writes, and removes values with automatic JSON parsing.  
-Works safely with SSR environments.
+Counter with a minimum of 1 and an optional maximum.
+
+```ts
+const { count, increase, decrease, handleChangeCount } = useCount({
+  initialState?: number,   // default: 1
+  limit?: number,          // max value
+  onChange?: (value: number) => void,
+});
+```
+
+| Return | Type | Description |
+| --- | --- | --- |
+| `count` | `number` | Current count |
+| `increase` | `() => void` | +1 |
+| `decrease` | `() => void` | -1 (min 1) |
+| `handleChangeCount` | `(n: number) => void` | Set directly |
 
 ```tsx
-import { useSessionStorage } from 'hook-kits';
+import { useCount } from 'hook-kits';
 
-export default function SessionStorageExample() {
-  const { value, setItem, removeItem } = useSessionStorage('user', {
-    name: 'Guest',
-  });
+function CountExample() {
+  const { count, increase, decrease } = useCount({ initialState: 1, limit: 10 });
 
   return (
     <div>
-      <p>Name: {value.name}</p>
-
-      <button onClick={() => setItem({ name: 'Alice' })}>
-        Set Name to Alice
-      </button>
-
-      <button onClick={removeItem}>Reset</button>
+      <button onClick={decrease}>-</button>
+      <span>{count}</span>
+      <button onClick={increase}>+</button>
     </div>
   );
 }
 ```
 
-</details>
+---
 
-<details>
-  <summary><strong>useResize</strong></summary>
+### useInput
 
-A hook that observes the size of a DOM element and returns its current `DOMRect`.  
-Useful for responsive components, dynamic layouts, and size-based UI calculations.
+Manages single value or object-based form input.
+
+```ts
+const { value, handleInputChange, handleFieldChange, resetValue } = useInput(initialValue: T);
+```
+
+| Return | Type | Description |
+| --- | --- | --- |
+| `value` | `T` | Current value |
+| `handleInputChange` | `(e: ChangeEvent) => void` | Update single value |
+| `handleFieldChange` | `(e: ChangeEvent) => void` | Update object field by `name` attribute |
+| `resetValue` | `() => void` | Reset to initial value |
 
 ```tsx
-import { useResize } from 'hook-kits';
+import { useInput } from 'hook-kits';
 
-export default function ResizeExample() {
-  const { ref, rect } = useResize<HTMLDivElement>();
+function FormExample() {
+  const { value, handleFieldChange, resetValue } = useInput({ email: '', name: '' });
 
   return (
-    <div>
-      <div
-        ref={ref}
-        style={{
-          width: '50%',
-          resize: 'both',
-          overflow: 'auto',
-          border: '1px solid #aaa',
-          padding: '1rem',
-        }}
-      >
-        Resize me!
-      </div>
-
-      <p>
-        Width: {rect?.width ?? 0}px — Height: {rect?.height ?? 0}px
-      </p>
-    </div>
+    <form>
+      <input name="email" value={value.email} onChange={handleFieldChange} />
+      <input name="name" value={value.name} onChange={handleFieldChange} />
+      <button type="button" onClick={resetValue}>Reset</button>
+    </form>
   );
 }
 ```
 
-</details>
+---
 
-<details>
-  <summary><strong>useRafState</strong></summary>
+### usePrevious
 
-A state hook that updates inside a `requestAnimationFrame` loop.  
-Useful for high-frequency UI updates such as scroll, resize, or animation-driven state changes.
+Returns the value from the previous render.
 
-```tsx
-import { useRafState } from 'hook-kits';
-
-export default function RafStateExample() {
-  const { state, setRafState } = useRafState(0);
-
-  return (
-    <div>
-      <p>Value: {state}</p>
-
-      <button onClick={() => setRafState(state + 1)}>Increment (RAF)</button>
-    </div>
-  );
-}
+```ts
+const previousValue: T | undefined = usePrevious(value: T);
 ```
-
-</details>
-
-<details>
-  <summary><strong>usePrevious</strong></summary>
-
-Returns the previous value of a state or prop.  
-Useful for comparison, animations, and detecting value changes.
 
 ```tsx
 import { usePrevious } from 'hook-kits';
 import { useState } from 'react';
 
-export default function PreviousExample() {
+function PreviousExample() {
   const [count, setCount] = useState(0);
   const prev = usePrevious(count);
 
   return (
     <div>
-      <p>Current: {count}</p>
-      <p>Previous: {prev ?? 'N/A'}</p>
-
-      <button onClick={() => setCount((c) => c + 1)}>Increment</button>
+      <p>Current: {count} / Previous: {prev ?? 'N/A'}</p>
+      <button onClick={() => setCount((c) => c + 1)}>+1</button>
     </div>
   );
 }
 ```
 
-</details>
+---
 
-<details>
-  <summary><strong>useObserver</strong></summary>
+### useRafState
 
-A hook built on top of the `IntersectionObserver` API.  
-It detects when an element enters the viewport and optionally triggers a callback.
+Updates state within `requestAnimationFrame`. Ideal for high-frequency updates like scroll or resize.
+
+```ts
+const { state, setRafState } = useRafState(defaultValue: T);
+```
+
+| Return | Type | Description |
+| --- | --- | --- |
+| `state` | `T` | Current state |
+| `setRafState` | `(value: T) => void` | RAF-based state update |
 
 ```tsx
-import { useObserver } from 'hook-kits';
+import { useRafState } from 'hook-kits';
 
-export default function ObserverExample() {
-  const { ref, isIntersecting } = useObserver({
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.5,
-    onIntersect: () => {
-      console.log('Element is visible!');
-    },
-  });
+function RafExample() {
+  const { state, setRafState } = useRafState(0);
 
-  return (
-    <div style={{ height: '200vh', padding: '200px 0' }}>
-      <div
-        ref={ref}
-        style={{
-          height: '150px',
-          background: isIntersecting ? '#4caf50' : '#ddd',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {isIntersecting ? 'Visible' : 'Scroll Down'}
-      </div>
-    </div>
-  );
+  return <button onClick={() => setRafState(state + 1)}>Count: {state}</button>;
 }
 ```
 
-</details>
+---
 
-<details>
-  <summary><strong>useMount</strong></summary>
+### useClickAway
 
-Returns `true` after the component is mounted.  
-Useful for delaying logic until the first client render.
+Detects clicks outside an element (mousedown, touchstart) and fires a callback. Useful for modals, dropdowns, and tooltips.
 
-```tsx
-import { useMount } from 'hook-kits';
-
-export default function MountExample() {
-  const isMount = useMount();
-
-  return (
-    <div>
-      <p>Mounted: {isMount ? 'YES' : 'NO'}</p>
-    </div>
-  );
-}
+```ts
+const ref = useClickAway<T extends HTMLElement>(onClick: (e?: MouseEvent | TouchEvent) => void);
 ```
 
-</details>
-
-<details>
-  <summary><strong>useLocalStorage</strong></summary>
-
-A typed localStorage hook that reads, writes, and removes values with automatic JSON parsing.  
-Safely handles SSR environments.
-
 ```tsx
-import { useLocalStorage } from 'hook-kits';
+import { useClickAway } from 'hook-kits';
+import { useState } from 'react';
 
-export default function LocalStorageExample() {
-  const { value, setItem, removeItem } = useLocalStorage('theme', 'light');
-
-  return (
-    <div>
-      <p>Theme: {value}</p>
-
-      <button onClick={() => setItem('dark')}>Set Dark</button>
-      <button onClick={() => setItem('light')}>Set Light</button>
-      <button onClick={removeItem}>Reset</button>
-    </div>
-  );
-}
-```
-
-</details>
-
-<details>
-  <summary><strong>useLazyImageLoad</strong></summary>
-
-A lazy-loading hook for images using `IntersectionObserver`.  
-It waits until the image enters the viewport, then triggers a load event and updates the `loaded` state.
-
-```tsx
-import { useLazyImageLoad } from 'hook-kits';
-
-export default function LazyImageExample() {
-  const { ref, loaded } = useLazyImageLoad({
-    isLazy: true,
-    root: null,
-    threshold: 0.1,
-    rootMargin: '0px',
-  });
-
-  return (
-    <div>
-      {!loaded && <p>Loading image...</p>}
-
-      <img
-        ref={ref}
-        data-src='https://picsum.photos/500'
-        src={loaded ? 'https://picsum.photos/500' : undefined}
-        alt='Lazy Example'
-        style={{
-          width: 300,
-          height: 200,
-          background: '#eee',
-          objectFit: 'cover',
-        }}
-      />
-    </div>
-  );
-}
-```
-
-</details>
-
-<details>
-  <summary><strong>useIsClient</strong></summary>
-
-Returns `true` only on the client-side after the component has mounted.  
-Useful for avoiding SSR mismatches or running client-only logic.
-
-```tsx
-import { useIsClient } from 'hook-kits';
-
-export default function IsClientExample() {
-  const isClient = useIsClient();
-
-  return (
-    <div>
-      <p>Client Render: {isClient ? 'YES' : 'NO'}</p>
-    </div>
-  );
-}
-```
-
-</details>
-
-<details>
-  <summary><strong>useInput</strong></summary>
-
-A flexible input handler hook for both single-value inputs and object-based form fields.  
-Supports simple input changes, named-field updates, and value reset.
-
-```tsx
-import { useInput } from 'hook-kits';
-
-export default function InputExample() {
-  // Single value input
-  const {
-    value: text,
-    handleInputChange,
-    resetValue: resetText,
-  } = useInput('');
-
-  // Object value input (e.g., form fields)
-  const {
-    value: form,
-    handleFieldChange,
-    resetValue: resetForm,
-  } = useInput({ email: '', username: '' });
-
-  return (
-    <div>
-      <h3>Single Input</h3>
-      <input
-        value={text}
-        onChange={handleInputChange}
-      />
-      <button onClick={resetText}>Reset</button>
-
-      <h3>Form Fields</h3>
-      <input
-        name='email'
-        value={form.email}
-        onChange={handleFieldChange}
-      />
-      <input
-        name='username'
-        value={form.username}
-        onChange={handleFieldChange}
-      />
-      <button onClick={resetForm}>Reset Form</button>
-    </div>
-  );
-}
-```
-
-</details>
-
-<details>
-  <summary><strong>useHover</strong></summary>
-
-A hook that detects whether an element is being hovered.  
-Returns a `ref` to attach to the target element and a boolean `isHover`.
-
-```tsx
-import { useHover } from 'hook-kits';
-
-export default function HoverExample() {
-  const { ref, isHover } = useHover<HTMLDivElement>();
-
-  return (
-    <div>
-      <div
-        ref={ref}
-        style={{
-          width: 200,
-          height: 100,
-          background: isHover ? '#4caf50' : '#ccc',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          transition: '0.2s ease',
-        }}
-      >
-        {isHover ? 'Hovering!' : 'Hover me'}
-      </div>
-    </div>
-  );
-}
-```
-
-</details>
-
-<details>
-  <summary><strong>useEventSource</strong></summary>
-
-A hook for handling Server-Sent Events (SSE).  
-It manages connection lifecycle, listens for streamed chunks, handles errors, and allows manual cancellation.
-
-```tsx
-import { useEventSource } from 'hook-kits';
-
-export default function EventSourceExample() {
-  const { state, isError, cancelEventSource, eventSource } = useEventSource({
-    url: '/api/stream',
-    event: 'message',
-    initialState: [],
-    onOpen: () => console.log('SSE Connected'),
-    onResponse: (chunk) => console.log('Chunk:', chunk),
-    onError: (err) => console.error('Error:', err),
-    onCancel: () => console.log('SSE Cancelled'),
-  });
-
-  return (
-    <div>
-      <button onClick={cancelEventSource}>Cancel Stream</button>
-
-      <p>SSE Error: {isError ? 'YES' : 'NO'}</p>
-
-      <ul>
-        {state.map((item, i) => (
-          <li key={i}>{JSON.stringify(item)}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-```
-
-</details>
-
-<details>
-  <summary><strong>useEventCallback</strong></summary>
-
-A stable callback hook that always references the latest function without causing re-renders.  
-Useful when passing callbacks into `useEffect`, observers, or event listeners without adding them to dependency arrays.
-
-```tsx
-import { useEventCallback } from 'hook-kits';
-import { useEffect, useState } from 'react';
-
-export default function EventCallbackExample() {
-  const [count, setCount] = useState(0);
-
-  // Always up-to-date, but stable reference
-  const handleLog = useEventCallback(() => {
-    console.log('Current count:', count);
-  });
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      // This callback will always log the latest count,
-      // without adding `count` to the dependency array.
-      handleLog();
-    }, 1000);
-
-    return () => clearInterval(id);
-  }, [handleLog]);
-
-  return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={() => setCount((c) => c + 1)}>Increment</button>
-    </div>
-  );
-}
-```
-
-</details>
-
-<details>
-  <summary><strong>useCount</strong></summary>
-
-A counter hook with optional limits and change callbacks.  
-Supports increment, decrement, direct updates, and prevents invalid values.
-
-```tsx
-import { useCount } from 'hook-kits';
-
-export default function CountExample() {
-  const { count, increase, decrease, handleChangeCount } = useCount({
-    initialState: 1,
-    limit: 5,
-    onChange: (v) => console.log('Changed:', v),
-  });
-
-  return (
-    <div>
-      <p>Count: {count}</p>
-
-      <button onClick={decrease}>-</button>
-      <button onClick={increase}>+</button>
-
-      <button onClick={() => handleChangeCount(3)}>Set to 3</button>
-      <button onClick={() => handleChangeCount(10)}>Set to 10 (blocked)</button>
-    </div>
-  );
-}
-```
-
-</details>
-
-<details>
-  <summary><strong>useCopyClipBoard</strong></summary>
-
-A hook for copying text to the clipboard using the modern Clipboard API.  
-Returns the last copied text and a `copy` function.
-
-```tsx
-import { useCopyClipBoard } from 'hook-kits';
-
-export default function CopyExample() {
-  const { copiedText, copy } = useCopyClipBoard();
-
-  return (
-    <div>
-      <button onClick={() => copy('Hello World!')}>Copy Text</button>
-
-      <p>Copied: {copiedText ?? 'Nothing yet'}</p>
-    </div>
-  );
-}
-```
-
-</details>
-
-<details>
-  <summary><strong>useClickAway</strong></summary>
-
-A hook that triggers a callback when a user clicks outside the referenced element.  
-Useful for modals, dropdowns, tooltips, and any UI that should close on outside click.
-
-```tsx
-export default function ClickAwayExample() {
+function DropdownExample() {
   const [open, setOpen] = useState(false);
   const ref = useClickAway<HTMLDivElement>(() => setOpen(false));
 
   return (
     <div>
-      <button onClick={() => setOpen(true)}>Open Box</button>
-
+      <button onClick={() => setOpen(true)}>Open</button>
       {open && (
-        <div
-          ref={(el) => {
-            if (el) ref.current = el;
-          }}
-          style={{
-            width: 200,
-            height: 120,
-            background: '#4caf50',
-            color: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: 20,
-          }}
-        >
+        <div ref={(el) => { if (el) ref.current = el; }}>
           Click outside to close
         </div>
       )}
@@ -602,8 +235,371 @@ export default function ClickAwayExample() {
 }
 ```
 
-</details>
+---
 
-## 📄 License
+### useHover
 
-MIT License © 2025 @dhgg321
+Detects hover state of an element.
+
+```ts
+const { ref, isHover } = useHover<T extends HTMLElement>();
+```
+
+| Return | Type | Description |
+| --- | --- | --- |
+| `ref` | `React.Ref<T>` | Ref to attach to the target element |
+| `isHover` | `boolean` | Whether the element is being hovered |
+
+```tsx
+import { useHover } from 'hook-kits';
+
+function HoverExample() {
+  const { ref, isHover } = useHover<HTMLDivElement>();
+
+  return (
+    <div ref={ref} style={{ background: isHover ? '#4caf50' : '#ccc' }}>
+      {isHover ? 'Hovering!' : 'Hover me'}
+    </div>
+  );
+}
+```
+
+---
+
+### useHotKeys
+
+Detects keyboard shortcut combinations and fires a callback. Supports modifier keys (`Ctrl`, `Shift`, `Alt`, `Meta`) combined with a normal key, or each used alone.
+
+```ts
+useHotKeys({
+  keys: ['Ctrl', 'S'],
+  callback: () => { ... },
+});
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| `keys` | `ModifierKey[] \| [NormalKey] \| [...ModifierKey[], NormalKey]` | Key combination (case-insensitive) |
+| `callback` | `() => void` | Callback to invoke when matched |
+
+- **Modifier + normal key** &mdash; `['Ctrl', 'S']`, `['Ctrl', 'Shift', 'K']`
+- **Normal key only** &mdash; `['Escape']`, `['Enter']`
+- **Modifier only** &mdash; `['Ctrl']`, `['Ctrl', 'Shift']`
+- Calls `preventDefault()` automatically when matched
+- Exact match only &mdash; extra modifiers will not trigger the callback
+
+```tsx
+import { useHotKeys } from 'hook-kits';
+
+function SaveShortcut() {
+  useHotKeys({
+    keys: ['Ctrl', 'S'],
+    callback: () => console.log('Saved!'),
+  });
+
+  return <p>Press Ctrl+S to save</p>;
+}
+
+function CloseModal() {
+  useHotKeys({
+    keys: ['Escape'],
+    callback: () => console.log('Closed!'),
+  });
+
+  return <p>Press Escape to close</p>;
+}
+```
+
+---
+
+### useWheel
+
+Detects browser `wheel` events.
+
+```ts
+const { isWheel, handleWheelTrue, handleWheelFalse } = useWheel();
+```
+
+| Return | Type | Description |
+| --- | --- | --- |
+| `isWheel` | `boolean` | Whether wheel is scrolling |
+| `handleWheelTrue` | `() => void` | Manually set to `true` |
+| `handleWheelFalse` | `() => void` | Manually set to `false` |
+
+```tsx
+import { useWheel } from 'hook-kits';
+
+function WheelExample() {
+  const { isWheel } = useWheel();
+
+  return <p>Wheel: {isWheel ? 'YES' : 'NO'}</p>;
+}
+```
+
+---
+
+### useResize
+
+Observes element size changes using `ResizeObserver`.
+
+```ts
+const { ref, rect } = useResize<T extends HTMLElement>();
+```
+
+| Return | Type | Description |
+| --- | --- | --- |
+| `ref` | `React.Ref<T>` | Ref to attach to the target element |
+| `rect` | `DOMRectReadOnly \| null` | Current size and position |
+
+```tsx
+import { useResize } from 'hook-kits';
+
+function ResizeExample() {
+  const { ref, rect } = useResize<HTMLDivElement>();
+
+  return (
+    <div ref={ref} style={{ width: '50%', resize: 'both', overflow: 'auto' }}>
+      {rect?.width.toFixed(0)} x {rect?.height.toFixed(0)}
+    </div>
+  );
+}
+```
+
+---
+
+### useObserver
+
+Detects when an element enters the viewport using `IntersectionObserver`.
+
+```ts
+const { ref, isIntersecting } = useObserver<T extends HTMLElement>({
+  root?: Element | null,
+  rootMargin?: string,
+  threshold?: number | number[],
+  onIntersect: () => void,
+});
+```
+
+| Return | Type | Description |
+| --- | --- | --- |
+| `ref` | `React.Ref<T>` | Ref to attach to the observed element |
+| `isIntersecting` | `boolean` | Whether the element is in the viewport |
+
+```tsx
+import { useObserver } from 'hook-kits';
+
+function ObserverExample() {
+  const { ref, isIntersecting } = useObserver({
+    threshold: 0.5,
+    onIntersect: () => console.log('Visible!'),
+  });
+
+  return (
+    <div ref={ref} style={{ background: isIntersecting ? '#4caf50' : '#ddd' }}>
+      {isIntersecting ? 'Visible' : 'Scroll to see'}
+    </div>
+  );
+}
+```
+
+---
+
+### useLazyImageLoad
+
+Lazy loads images when they enter the viewport using `IntersectionObserver`.
+
+```ts
+const { ref, loaded } = useLazyImageLoad({
+  isLazy?: boolean,
+  root?: Element | null,
+  threshold?: number | number[],
+  rootMargin?: string,
+});
+```
+
+| Return | Type | Description |
+| --- | --- | --- |
+| `ref` | `React.Ref<HTMLImageElement>` | Ref to attach to the image element |
+| `loaded` | `boolean` | Whether the image has loaded |
+
+```tsx
+import { useLazyImageLoad } from 'hook-kits';
+
+function LazyImageExample() {
+  const { ref, loaded } = useLazyImageLoad({ isLazy: true, threshold: 0.1 });
+
+  return (
+    <img
+      ref={ref}
+      data-src="https://picsum.photos/500"
+      src={loaded ? 'https://picsum.photos/500' : undefined}
+      alt="Lazy loaded"
+    />
+  );
+}
+```
+
+---
+
+### useLocalStorage
+
+Type-safe read/write for `localStorage`. SSR-safe.
+
+```ts
+const { value, setItem, removeItem } = useLocalStorage<T>(key: string, defaultValue: T);
+```
+
+| Return | Type | Description |
+| --- | --- | --- |
+| `value` | `T` | Current stored value |
+| `setItem` | `(newValue: T) => void` | Store a value |
+| `removeItem` | `() => void` | Remove value (restores default) |
+
+```tsx
+import { useLocalStorage } from 'hook-kits';
+
+function ThemeExample() {
+  const { value, setItem } = useLocalStorage('theme', 'light');
+
+  return <button onClick={() => setItem(value === 'light' ? 'dark' : 'light')}>Theme: {value}</button>;
+}
+```
+
+---
+
+### useSessionStorage
+
+Type-safe read/write for `sessionStorage`. SSR-safe.
+
+```ts
+const { value, setItem, removeItem } = useSessionStorage<T>(key: string, defaultValue: T);
+```
+
+| Return | Type | Description |
+| --- | --- | --- |
+| `value` | `T` | Current stored value |
+| `setItem` | `(newValue: T) => void` | Store a value |
+| `removeItem` | `() => void` | Remove value (restores default) |
+
+```tsx
+import { useSessionStorage } from 'hook-kits';
+
+function SessionExample() {
+  const { value, setItem, removeItem } = useSessionStorage('user', { name: 'Guest' });
+
+  return (
+    <div>
+      <p>{value.name}</p>
+      <button onClick={() => setItem({ name: 'Alice' })}>Set Alice</button>
+      <button onClick={removeItem}>Reset</button>
+    </div>
+  );
+}
+```
+
+---
+
+### useCopyClipBoard
+
+Copies text to the clipboard using the Clipboard API.
+
+```ts
+const { copiedText, copy } = useCopyClipBoard();
+```
+
+| Return | Type | Description |
+| --- | --- | --- |
+| `copiedText` | `string \| null` | Last copied text |
+| `copy` | `(text: string) => Promise<void>` | Copy to clipboard |
+
+```tsx
+import { useCopyClipBoard } from 'hook-kits';
+
+function CopyExample() {
+  const { copiedText, copy } = useCopyClipBoard();
+
+  return (
+    <div>
+      <button onClick={() => copy('Hello!')}>Copy</button>
+      <p>Copied: {copiedText ?? '-'}</p>
+    </div>
+  );
+}
+```
+
+---
+
+### useIsClient
+
+Returns `true` only on the client side. Prevents hydration mismatch in SSR environments.
+
+```ts
+const isClient: boolean = useIsClient();
+```
+
+```tsx
+import { useIsClient } from 'hook-kits';
+
+function ClientOnly() {
+  const isClient = useIsClient();
+
+  if (!isClient) return null;
+  return <p>Client only content</p>;
+}
+```
+
+---
+
+### useMount
+
+Returns `true` after the component has mounted.
+
+```ts
+const isMounted: boolean = useMount();
+```
+
+```tsx
+import { useMount } from 'hook-kits';
+
+function MountExample() {
+  const isMounted = useMount();
+
+  return <p>Mounted: {isMounted ? 'YES' : 'NO'}</p>;
+}
+```
+
+---
+
+### useEventCallback
+
+Returns a stable callback reference that always points to the latest function. Prevents stale closures in `useEffect` and event listeners without adding the callback to dependency arrays.
+
+```ts
+const stableCallback = useEventCallback(callback?: T);
+```
+
+```tsx
+import { useEventCallback } from 'hook-kits';
+import { useEffect, useState } from 'react';
+
+function EventCallbackExample() {
+  const [count, setCount] = useState(0);
+
+  const log = useEventCallback(() => {
+    console.log('count:', count); // always references latest count
+  });
+
+  useEffect(() => {
+    const id = setInterval(log, 1000);
+    return () => clearInterval(id);
+  }, [log]);
+
+  return <button onClick={() => setCount((c) => c + 1)}>Count: {count}</button>;
+}
+```
+
+---
+
+## License
+
+MIT
