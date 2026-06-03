@@ -1,3 +1,5 @@
+'use client';
+
 import { ComponentProps, ReactNode } from 'react';
 import clsx from 'clsx';
 
@@ -7,7 +9,7 @@ interface Props<T> extends ComponentProps<'ul'>, styles.ListVariants {
   items?: T[];
   render: (item: T, index: number) => ReactNode;
   keyExtractor?: (item: T, index: number) => string | number;
-  liProps?: ComponentProps<'li'>;
+  liProps?: ComponentProps<'li'> & { [key: `data-${string}`]: string };
 }
 
 const List = <T,>({

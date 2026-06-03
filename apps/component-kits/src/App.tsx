@@ -1,5 +1,5 @@
 const App = () => {
-  return <div>react-component-kits</div>;
+  return <div>component-kits</div>;
 };
 
 export default App;
