@@ -1,12 +1,9 @@
+// @ts-nocheck
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
-import { defineConfig, InlineConfig, UserConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
-
-interface VitestConfigExport extends UserConfig {
-  test: InlineConfig;
-}
 
 export default defineConfig({
   root: __dirname,
@@ -53,4 +50,4 @@ export default defineConfig({
     },
     emptyOutDir: true,
   },
-} as VitestConfigExport);
+});
