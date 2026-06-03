@@ -1,5 +1,5 @@
 {
-  "name": "component-kits",
+  "name": "components-kits",
   "description": "A lightweight, reusable React component library for modern apps.",
   "keywords": [
     "react",
@@ -28,7 +28,7 @@
     }
   },
   "private": false,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

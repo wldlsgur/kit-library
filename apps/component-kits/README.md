@@ -1,4 +1,4 @@
-# component-kits
+# components-kits
 
 모던 React 애플리케이션 개발을 위한 경량 유틸리티 컴포넌트 라이브러리입니다.
 반복적인 UI 패턴을 선언적으로 처리할 수 있도록 설계되었습니다.
@@ -6,9 +6,9 @@
 ## 설치
 
 ```bash
-npm install component-kits
+npm install components-kits
 # or
-pnpm add component-kits
+pnpm add components-kits
 ```
 
 ### Peer Dependencies
@@ -23,7 +23,7 @@ pnpm add component-kits
 배열 데이터를 선언적으로 렌더링하는 제네릭 리스트 컴포넌트입니다.
 
 ```tsx
-import { List } from 'component-kits';
+import { List } from 'components-kits';
 
 const fruits = ['사과', '바나나', '체리'];
 
@@ -70,7 +70,7 @@ const users = [
 삼항 연산자나 `&&` 패턴 대신 명확한 의도를 드러내는 방식으로 조건부 렌더링을 수행합니다.
 
 ```tsx
-import { VisibleGuard } from 'component-kits';
+import { VisibleGuard } from 'components-kits';
 
 <VisibleGuard isVisible={isLoggedIn}>
   <Dashboard />
@@ -104,7 +104,7 @@ import { VisibleGuard } from 'component-kits';
 삼항 연산자 체이닝이나 if/else 나열 대신 `switch/case`를 JSX로 표현합니다.
 
 ```tsx
-import { SwitchCase } from 'component-kits';
+import { SwitchCase } from 'components-kits';
 
 <SwitchCase
   value={status}
@@ -132,7 +132,7 @@ import { SwitchCase } from 'component-kits';
 `createPortal` 래퍼 컴포넌트입니다. children을 지정된 DOM 노드에 렌더링합니다.
 
 ```tsx
-import { Portal } from 'component-kits';
+import { Portal } from 'components-kits';
 
 <Portal container="#modal-root">
   <Dialog />
@@ -157,7 +157,7 @@ IntersectionObserver 기반 무한 스크롤 리스트 컴포넌트입니다.
 리스트 하단에 감지용 요소를 배치하고, 뷰포트에 진입하면 콜백을 실행합니다.
 
 ```tsx
-import { InfiniteList } from 'component-kits';
+import { InfiniteList } from 'components-kits';
 
 <InfiniteList
   items={data}
