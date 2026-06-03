@@ -1,9 +1,9 @@
 # components-kits
 
-모던 React 애플리케이션 개발을 위한 경량 유틸리티 컴포넌트 라이브러리입니다.
-반복적인 UI 패턴을 선언적으로 처리할 수 있도록 설계되었습니다.
+A lightweight utility component library for modern React applications.
+Designed to handle repetitive UI patterns declaratively.
 
-## 설치
+## Installation
 
 ```bash
 npm install components-kits
@@ -16,16 +16,16 @@ pnpm add components-kits
 - `react` ^18 || ^19
 - `react-dom` ^18 || ^19
 
-## 컴포넌트
+## Components
 
 ### List
 
-배열 데이터를 선언적으로 렌더링하는 제네릭 리스트 컴포넌트입니다.
+A generic list component for declarative array rendering.
 
 ```tsx
 import { List } from 'components-kits';
 
-const fruits = ['사과', '바나나', '체리'];
+const fruits = ['Apple', 'Banana', 'Cherry'];
 
 <List
   items={fruits}
@@ -35,23 +35,23 @@ const fruits = ['사과', '바나나', '체리'];
 
 #### Props
 
-| Prop           | 타입                                           | 필수 | 설명                               |
-| -------------- | ---------------------------------------------- | ---- | ---------------------------------- |
-| `items`        | `T[]`                                          | -    | 렌더링할 배열 데이터               |
-| `render`       | `(item: T, index: number) => ReactNode`        | O    | 각 항목의 렌더링 함수              |
-| `keyExtractor` | `(item: T, index: number) => string \| number` | -    | 각 항목의 고유 key를 반환하는 함수 |
-| `direction`    | `'row' \| 'column'`                            | -    | 리스트 방향 (기본값: `'column'`)   |
-| `liProps`      | `ComponentProps<'li'>`                         | -    | 각 `<li>` 요소에 전달할 props      |
-| `className`    | `string`                                       | -    | `<ul>` 요소에 추가할 클래스명      |
+| Prop           | Type                                           | Required | Description                                    |
+| -------------- | ---------------------------------------------- | -------- | ---------------------------------------------- |
+| `items`        | `T[]`                                          | -        | Array data to render                           |
+| `render`       | `(item: T, index: number) => ReactNode`        | Yes      | Render function for each item                  |
+| `keyExtractor` | `(item: T, index: number) => string \| number` | -        | Function to extract a unique key for each item |
+| `direction`    | `'row' \| 'column'`                            | -        | List direction (default: `'column'`)           |
+| `liProps`      | `ComponentProps<'li'>`                         | -        | Props passed to each `<li>` element            |
+| `className`    | `string`                                       | -        | Class name added to the `<ul>` element         |
 
-`<ul>` 요소의 모든 표준 HTML 속성도 지원합니다.
+All standard HTML attributes for `<ul>` are also supported.
 
-#### 객체 배열 사용 예시
+#### Object Array Example
 
 ```tsx
 const users = [
-  { id: 1, name: '홍길동' },
-  { id: 2, name: '김철수' },
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' },
 ];
 
 <List
@@ -66,8 +66,8 @@ const users = [
 
 ### VisibleGuard
 
-조건부 렌더링을 선언적으로 처리하는 컴포넌트입니다.
-삼항 연산자나 `&&` 패턴 대신 명확한 의도를 드러내는 방식으로 조건부 렌더링을 수행합니다.
+A component for declarative conditional rendering.
+Replaces ternary operators and `&&` patterns with a more expressive approach.
 
 ```tsx
 import { VisibleGuard } from 'components-kits';
@@ -79,13 +79,13 @@ import { VisibleGuard } from 'components-kits';
 
 #### Props
 
-| Prop        | 타입        | 필수 | 설명                                                           |
-| ----------- | ----------- | ---- | -------------------------------------------------------------- |
-| `isVisible` | `boolean`   | O    | `true`이면 children을 렌더링                                   |
-| `fallback`  | `ReactNode` | -    | `isVisible`이 `false`일 때 대신 렌더링할 요소 (기본값: `null`) |
-| `children`  | `ReactNode` | -    | 조건이 충족될 때 렌더링할 콘텐츠                               |
+| Prop        | Type        | Required | Description                                                        |
+| ----------- | ----------- | -------- | ------------------------------------------------------------------ |
+| `isVisible` | `boolean`   | Yes      | Renders children when `true`                                       |
+| `fallback`  | `ReactNode` | -        | Element to render when `isVisible` is `false` (default: `null`)    |
+| `children`  | `ReactNode` | -        | Content to render when the condition is met                        |
 
-#### fallback 사용 예시
+#### Fallback Example
 
 ```tsx
 <VisibleGuard
@@ -100,8 +100,8 @@ import { VisibleGuard } from 'components-kits';
 
 ### SwitchCase
 
-값 기반 분기 렌더링을 선언적으로 처리하는 컴포넌트입니다.
-삼항 연산자 체이닝이나 if/else 나열 대신 `switch/case`를 JSX로 표현합니다.
+A component for declarative value-based conditional rendering.
+Replaces ternary chaining and if/else blocks with a JSX-native `switch/case`.
 
 ```tsx
 import { SwitchCase } from 'components-kits';
@@ -119,17 +119,17 @@ import { SwitchCase } from 'components-kits';
 
 #### Props
 
-| Prop          | 타입                                | 필수 | 설명                                               |
-| ------------- | ----------------------------------- | ---- | -------------------------------------------------- |
-| `value`       | `string \| number`                  | O    | 매칭할 값                                          |
-| `cases`       | `Record<string \| number, ReactNode>` | O    | 값에 대응하는 렌더링 맵                            |
-| `defaultCase` | `ReactNode`                         | -    | 일치하는 case가 없을 때 렌더링할 요소 (기본값: `null`) |
+| Prop          | Type                                    | Required | Description                                              |
+| ------------- | --------------------------------------- | -------- | -------------------------------------------------------- |
+| `value`       | `string \| number`                      | Yes      | Value to match against                                   |
+| `cases`       | `Record<string \| number, ReactNode>`   | Yes      | Map of values to rendered content                        |
+| `defaultCase` | `ReactNode`                             | -        | Element to render when no case matches (default: `null`) |
 
 ---
 
 ### Portal
 
-`createPortal` 래퍼 컴포넌트입니다. children을 지정된 DOM 노드에 렌더링합니다.
+A `createPortal` wrapper component. Renders children into a specified DOM node.
 
 ```tsx
 import { Portal } from 'components-kits';
@@ -141,20 +141,20 @@ import { Portal } from 'components-kits';
 
 #### Props
 
-| Prop        | 타입               | 필수 | 설명                                                        |
-| ----------- | ------------------ | ---- | ----------------------------------------------------------- |
-| `container` | `Element \| string` | -    | DOM 요소 또는 CSS 선택자 (기본값: `document.body`)          |
-| `children`  | `ReactNode`        | -    | 포털로 렌더링할 콘텐츠                                     |
+| Prop        | Type                 | Required | Description                                               |
+| ----------- | -------------------- | -------- | --------------------------------------------------------- |
+| `container` | `Element \| string`  | -        | DOM element or CSS selector (default: `document.body`)    |
+| `children`  | `ReactNode`          | -        | Content to render through the portal                      |
 
-- SSR 환경에서 안전하게 동작합니다 (마운트 후 렌더링)
-- 선택자가 매칭되지 않으면 아무것도 렌더링하지 않습니다
+- SSR-safe (renders only after mount)
+- Renders nothing if the selector does not match any element
 
 ---
 
 ### InfiniteList
 
-IntersectionObserver 기반 무한 스크롤 리스트 컴포넌트입니다.
-리스트 하단에 감지용 요소를 배치하고, 뷰포트에 진입하면 콜백을 실행합니다.
+An IntersectionObserver-based infinite scroll list component.
+Places a sentinel element at the bottom of the list and triggers a callback when it enters the viewport.
 
 ```tsx
 import { InfiniteList } from 'components-kits';
@@ -171,21 +171,21 @@ import { InfiniteList } from 'components-kits';
 
 #### Props
 
-| Prop              | 타입                                           | 필수 | 설명                                                  |
-| ----------------- | ---------------------------------------------- | ---- | ----------------------------------------------------- |
-| `items`           | `T[]`                                          | -    | 렌더링할 배열 데이터                                  |
-| `render`          | `(item: T, index: number) => ReactNode`        | O    | 각 항목의 렌더링 함수                                 |
-| `keyExtractor`    | `(item: T, index: number) => string \| number` | -    | 각 항목의 고유 key를 반환하는 함수                    |
-| `liProps`         | `ComponentProps<'li'>`                         | -    | 각 `<li>` 요소에 전달할 props                         |
-| `onIntersect`     | `() => void`                                   | O    | 감지 요소가 뷰포트에 진입했을 때 호출되는 콜백        |
-| `enabled`         | `boolean`                                      | -    | `false`이면 observer 비활성화 (기본값: `true`)        |
-| `observerOptions` | `IntersectionObserverInit`                     | -    | `root`, `rootMargin`, `threshold` 옵저버 옵션         |
+| Prop              | Type                                           | Required | Description                                          |
+| ----------------- | ---------------------------------------------- | -------- | ---------------------------------------------------- |
+| `items`           | `T[]`                                          | -        | Array data to render                                 |
+| `render`          | `(item: T, index: number) => ReactNode`        | Yes      | Render function for each item                        |
+| `keyExtractor`    | `(item: T, index: number) => string \| number` | -        | Function to extract a unique key for each item       |
+| `liProps`         | `ComponentProps<'li'>`                         | -        | Props passed to each `<li>` element                  |
+| `onIntersect`     | `() => void`                                   | Yes      | Callback fired when sentinel enters the viewport     |
+| `enabled`         | `boolean`                                      | -        | Disables the observer when `false` (default: `true`) |
+| `observerOptions` | `IntersectionObserverInit`                     | -        | `root`, `rootMargin`, `threshold` observer options   |
 
-`<ul>` 요소의 모든 표준 HTML 속성도 지원합니다.
+All standard HTML attributes for `<ul>` are also supported.
 
-- 감지용 `<div>`는 `items`가 1개 이상이고 `enabled`일 때만 렌더링됩니다
-- 데이터를 모두 불러온 후 `enabled={false}`로 observer를 비활성화하세요
+- The sentinel `<div>` is only rendered when `items` has at least one item and `enabled` is `true`
+- Set `enabled={false}` once all data has been loaded to deactivate the observer
 
-## 라이선스
+## License
 
 MIT
