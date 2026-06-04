@@ -11,14 +11,14 @@ async function bootstrap(): Promise<void> {
   });
 
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
-  app.enableCors(); // 브라우저에서 fetch로 용량 측정 등 교차 출처 호출 허용
   app.enableShutdownHooks();
 
   const config = app.get(ConfigService);
-  const port = config.get<AppConfig['port']>('port') ?? 8080;
+  const port = config.getOrThrow<AppConfig['port']>('port');
+
   await app.listen(port, '0.0.0.0');
-  // eslint-disable-next-line no-console
-  console.log(`image-resizer listening on http://0.0.0.0:${port}`);
+
+  console.log(`Server listening on ${port}`);
 }
 
 void bootstrap();
