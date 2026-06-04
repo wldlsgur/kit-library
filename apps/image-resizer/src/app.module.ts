@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { loadConfig } from './config/configuration';
-import { HealthController } from './health/health.controller';
 import { ResizeModule } from './resize/resize.module';
 
 @Module({
@@ -13,6 +12,5 @@ import { ResizeModule } from './resize/resize.module';
     }),
     ResizeModule,
   ],
-  controllers: [HealthController],
 })
 export class AppModule {}

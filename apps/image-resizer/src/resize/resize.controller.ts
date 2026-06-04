@@ -1,10 +1,12 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Response } from 'express';
 import type { AppConfig } from '../config/configuration';
+import { ResizeQueryDto } from './dto/resize-query.dto';
+import { AllowedUrlGuard } from './guard/allowed-url.guard';
 import { ResizeService } from './resize.service';
 
-@Controller('resize')
+@Controller('')
 export class ResizeController {
   private readonly cacheMaxAge: number;
 
@@ -17,11 +19,9 @@ export class ResizeController {
   }
 
   @Get()
-  async resize(
-    @Query() raw: Record<string, unknown>,
-    @Res() res: Response,
-  ): Promise<void> {
-    const result = await this.resizer.process(raw);
+  @UseGuards(AllowedUrlGuard)
+  async resize(@Query() query: ResizeQueryDto, @Res() res: Response) {
+    const result = await this.resizer.process(query);
 
     res.setHeader('Content-Type', result.contentType);
     res.setHeader('Cache-Control', `public, max-age=${this.cacheMaxAge}`);

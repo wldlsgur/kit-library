@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import sharp from 'sharp';
-import { type Format, FORMAT_VALUES, ResizeOptions } from '../domain/resize-options';
-import type { ImagePayload } from '../image-payload';
+import {
+  FORMAT_VALUES,
+  type Format,
+  type ResizeQueryDto,
+} from '../dto/resize-query.dto';
+import { ConfigService } from '@nestjs/config';
+import { AppConfig } from '../../config/configuration';
 
 const FORMAT_CONTENT_TYPE: Record<Format, string> = {
   webp: 'image/webp',
@@ -10,47 +15,55 @@ const FORMAT_CONTENT_TYPE: Record<Format, string> = {
   png: 'image/png',
 };
 
-/** sharp 기반 이미지 변환(인프라). 리사이즈/포맷/품질 적용. */
 @Injectable()
 export class ImageProcessor {
-  async transform(
-    input: Buffer,
-    options: ResizeOptions,
-    defaultQuality: number,
-  ): Promise<ImagePayload> {
-    const quality = options.qualityOr(defaultQuality);
+  private readonly defaultQuality: number;
 
-    let pipeline = sharp(input).rotate(); // EXIF 방향 자동 보정
+  constructor(config: ConfigService) {
+    this.defaultQuality =
+      config.getOrThrow<AppConfig['defaultQuality']>('defaultQuality');
+  }
 
-    if (options.hasResize()) {
+  async transform(input: Buffer, query: ResizeQueryDto) {
+    const quality = query.quality ?? this.defaultQuality;
+
+    let pipeline = sharp(input).rotate();
+
+    if (query.w || query.h) {
       pipeline = pipeline.resize({
-        width: options.w,
-        height: options.h,
-        fit: options.fit ?? 'cover',
+        width: query.w,
+        height: query.h,
+        fit: query.fit ?? 'cover',
       });
     }
 
-    const targetFormat = await this.resolveFormat(input, options.format);
-    const data = await this.applyFormat(pipeline, targetFormat, quality).toBuffer();
+    const targetFormat = await this.resolveFormat(input, query.format);
+    pipeline = this.applyFormat(pipeline, targetFormat, quality);
+    const data = await pipeline.toBuffer();
 
     return { data, contentType: FORMAT_CONTENT_TYPE[targetFormat] };
   }
 
-  /** format 미지정 시 원본 포맷 유지(지원 목록에 없으면 webp로 대체). */
-  private async resolveFormat(input: Buffer, requested?: Format): Promise<Format> {
-    if (requested) return requested;
+  private async resolveFormat(input: Buffer, requested?: Format) {
+    if (requested) {
+      return requested;
+    }
+
     const { format } = await sharp(input).metadata();
-    return FORMAT_VALUES.includes(format as Format) ? (format as Format) : 'webp';
+
+    return FORMAT_VALUES.includes(format as Format)
+      ? (format as Format)
+      : 'webp';
   }
 
-  private applyFormat(pipeline: sharp.Sharp, format: Format, quality: number): sharp.Sharp {
+  private applyFormat(pipeline: sharp.Sharp, format: Format, quality: number) {
     switch (format) {
       case 'webp':
         return pipeline.webp({ quality });
       case 'avif':
         return pipeline.avif({ quality });
       case 'jpeg':
-        return pipeline.jpeg({ quality, mozjpeg: true });
+        return pipeline.jpeg({ quality });
       case 'png':
         return pipeline.png({ quality });
     }
