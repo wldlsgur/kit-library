@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule } from '@nestjs/config';
 import { loadConfig } from './config/configuration';
 import { ResizeModule } from './resize/resize.module';
@@ -9,6 +10,11 @@ import { ResizeModule } from './resize/resize.module';
       isGlobal: true,
       cache: true,
       load: [loadConfig],
+    }),
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 0,
+      max: 500,
     }),
     ResizeModule,
   ],

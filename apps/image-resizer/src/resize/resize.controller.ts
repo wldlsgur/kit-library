@@ -1,30 +1,18 @@
-import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import type { Response } from 'express';
-import type { AppConfig } from '../config/configuration';
+import { Controller, Get, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ResizeQueryDto } from './dto/resize-query.dto';
 import { AllowedUrlGuard } from './guard/allowed-url.guard';
+import { ImageResponseInterceptor } from './interceptor/image-response.interceptor';
 import { ResizeService } from './resize.service';
 
 @Controller('')
 export class ResizeController {
-  private readonly cacheMaxAge: number;
-
-  constructor(
-    private readonly resizer: ResizeService,
-    config: ConfigService,
-  ) {
-    this.cacheMaxAge =
-      config.getOrThrow<AppConfig['cacheMaxAge']>('cacheMaxAge');
-  }
+  constructor(private readonly resizer: ResizeService) {}
 
   @Get()
   @UseGuards(AllowedUrlGuard)
-  async resize(@Query() query: ResizeQueryDto, @Res() res: Response) {
-    const result = await this.resizer.process(query);
-
-    res.setHeader('Content-Type', result.contentType);
-    res.setHeader('Cache-Control', `public, max-age=${this.cacheMaxAge}`);
-    res.send(result.data);
+  @UseInterceptors(ImageResponseInterceptor, CacheInterceptor)
+  async resize(@Query() query: ResizeQueryDto) {
+    return this.resizer.process(query);
   }
 }

@@ -1,5 +1,4 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import type { ResizeQueryDto } from './dto/resize-query.dto';
 import { ImageProcessor } from './infra/image-processor';
 
