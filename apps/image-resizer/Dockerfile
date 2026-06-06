@@ -1,31 +1,34 @@
-# syntax=docker/dockerfile:1
+FROM node:22-alpine AS base
+RUN npm install -g pnpm@8.15.6 turbo
+WORKDIR /repo
 
-# 이 app만 독립 빌드한다. 빌드 컨텍스트 = apps/image-resizer
-# (모노레포 루트가 아니라 이 디렉토리에서 docker build .)
+FROM base AS pruner
+COPY . .
+RUN turbo prune image-resizer --docker
 
-# --- Stage 1: build ---
-FROM node:22-slim AS builder
-WORKDIR /app
+FROM base AS builder
+COPY --from=pruner /repo/out/json/ ./
+COPY turbo.json ./
+RUN pnpm install --frozen-lockfile
+COPY --from=pruner /repo/out/full/ ./
+RUN pnpm --filter=image-resizer build
 
-COPY package.json ./
-RUN npm install
-
-COPY tsconfig.json tsconfig.build.json nest-cli.json ./
-COPY src ./src
-RUN npm run build
-
-# --- Stage 2: runtime ---
-FROM node:22-slim AS runtime
+FROM node:22-alpine AS runner
+WORKDIR /repo
 ENV NODE_ENV=production
-WORKDIR /app
 
-COPY package.json ./
-RUN npm install --omit=dev && npm cache clean --force
+COPY --from=builder /repo/node_modules ./node_modules
+COPY --from=builder /repo/package.json /repo/pnpm-lock.yaml /repo/pnpm-workspace.yaml ./
+COPY --from=builder /repo/apps/image-resizer/package.json ./apps/image-resizer/
+COPY --from=builder /repo/apps/image-resizer/dist ./apps/image-resizer/dist
+COPY --from=builder /repo/apps/image-resizer/node_modules ./apps/image-resizer/node_modules
 
-COPY --from=builder /app/dist ./dist
+WORKDIR /repo/apps/image-resizer
 
 ENV PORT=8080
-EXPOSE 8080
-USER node
+ENV DEFAULT_QUALITY=80
+ENV CACHE_MAX_AGE=86400
+ENV ALLOWED_PREFIXES=localhost:5173
 
+EXPOSE 8080
 CMD ["node", "dist/main.js"]

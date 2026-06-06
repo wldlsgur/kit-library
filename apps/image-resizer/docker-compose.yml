@@ -1,12 +1,18 @@
 services:
   image-resizer:
-    build: .
+    build:
+      context: ../..
+      dockerfile: apps/image-resizer/Dockerfile
     image: image-resizer:latest
     container_name: image-resizer
     ports:
       - "${PORT:-8080}:8080"
     environment:
-      PORT: 8080
-      DEFAULT_QUALITY: 80
-      CACHE_MAX_AGE: 86400
+      PORT: ${PORT:-8080}
+      DEFAULT_QUALITY: ${DEFAULT_QUALITY:-80}
+      CACHE_MAX_AGE: ${CACHE_MAX_AGE:-86400}
+      ALLOWED_PREFIXES: ${ALLOWED_PREFIXES:-localhost:5173}
+    env_file:
+      - path: .env
+        required: false
     restart: unless-stopped
